@@ -1,36 +1,31 @@
 package fr.epsi;
 
+import fr.epsi.User;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Assert;
 
-public abstract class JpaTestCase {
-
+public abstract class JpaTestCase 
+{
 	private static EntityManagerFactory entityManagerFactory;
 	protected EntityManager entityManager;
-
-	@BeforeClass
-	public static void createEntityManagerFactory() {
-		entityManagerFactory = Persistence.createEntityManagerFactory("myPersistenceUnit");
-	}
-
-	@AfterClass
-	public static void closeEntityManagerFactory() {
-		entityManagerFactory.close();
-	}
-
-	@Before
-	public void createEntityManager() {
-		entityManager = entityManagerFactory.createEntityManager();
-	}
-
-	@After
-	public void closeEntityManager() {
-		entityManager.close();
+	
+	private void testCreate()
+	{
+		// Créer user en local
+		User user = new User();
+		user.setLogin("toto");
+		user.setPass("P@ssword");
+		user.setEmail("toto.mail@gmail.com");
+		
+		// Demander insertion dans la base de données
+		entityManager.persist(user);
+		
+		// Charger
+		user = entityManager.find(User.class, 1);
+		
+		assertEquals( "toto", user.getLogin() );
 	}
 }
