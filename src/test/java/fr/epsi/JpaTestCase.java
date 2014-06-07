@@ -33,5 +33,4 @@ public abstract class JpaTestCase {
 	public void closeEntityManager() {
 		entityManager.close();
 	}
-
 }
