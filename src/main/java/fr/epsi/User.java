@@ -1,5 +1,6 @@
 package fr.epsi;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -9,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="users")
@@ -23,7 +26,10 @@ public class User {
 	private String email;
 	@Column(name="users_pass")
 	private String pass;
-	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(updatable = false)
+	private Calendar updateDate;
+
 	public User() {
 	}
 
@@ -80,6 +86,13 @@ public class User {
 
 	public void setPass(String pass) {
 		this.pass = pass;
+	}
+	
+	public Calendar getUpdateDate() {
+		return updateDate;
+	}
+	public void setUpdateDate(Calendar updateDate) {
+		this.updateDate = updateDate;
 	}
 
 }
