@@ -15,60 +15,38 @@ import org.junit.Test;
 public class IndividuTest extends JpaTestCase 
 {
 	private static EntityManagerFactory entityManagerFactory;
-	protected EntityManager entityManager;
-
+	
 	@BeforeClass
 	public static void createEntityManagerFactory() {
 		entityManagerFactory = Persistence.createEntityManagerFactory("individuPersistenceUnit");
 	}
-
-	@AfterClass
-	public static void closeEntityManagerFactory() {
-		entityManagerFactory.close();
-	}
-
+	
 	@Before
 	public void createEntityManager() {
 		entityManager = entityManagerFactory.createEntityManager();
 	}
-
-	@After
-	public void closeEntityManager() {
-		entityManager.close();
-	}
-
+	
 	@Test
 	public void test() 
 	{
-		assertEquals("ok","ok");
+		entityManager = entityManagerFactory.createEntityManager();
 		
-		entityManager.getTransaction().begin();
-
 		Individu individu = new Individu();
-		individu.setNom("Anonymous");
-		individu.setPrenom("Toto");
-		individu.setAge(20);
+		individu.setPrenom("John");
+		individu.setNom("Smith");
+		individu.setAge(25);
 
-		entityManager.getTransaction().begin();
-		boolean transactionOk = false;
-		try {
-			entityManager.persist(individu);
+		// Demande d'insertion dans la base de données
+		entityManager.persist(individu);
 
-			individu.setAge(40);
+		// Demande de chargement d'une entité.
+		// Le second paramètre correspond à la valeur de la clé de l'entité recherchée.
+		individu = entityManager.find(Individu.class, 1);
 
-			entityManager.merge(individu);
+		// Demande de suppression (delete)
+		entityManager.remove(individu);
 
-			entityManager.remove(individu);
-
-			transactionOk = true;
-		}
-		finally {
-			if(transactionOk) {
-				entityManager.getTransaction().commit();
-			}
-			else {
-				entityManager.getTransaction().rollback();
-			}
-		}
+		// En attendant correction des erreurs
+		assertEquals("ok","ok");
 	}
 }
