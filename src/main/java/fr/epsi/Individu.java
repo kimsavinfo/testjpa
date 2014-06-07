@@ -45,9 +45,6 @@ public class Individu {
 	@Lob
 	@Basic(fetch=FetchType.LAZY)
 	private byte[] image;
-
-	@Transient
-	private Abonnement abonnement;
 	
 	public Individu()
 	{
