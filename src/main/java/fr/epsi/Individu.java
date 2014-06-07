@@ -48,6 +48,41 @@ public class Individu {
 
 	@Transient
 	private Abonnement abonnement;
+	
+	public Individu()
+	{
+		
+	}
+	
+	public Individu(String p_nom, String p_prenom, int p_age)
+	{
+		nom = p_nom;
+		prenom = p_prenom;
+		age = p_age;
+	}
+	
+	public String getNom() {
+		return nom;
+	}
 
-	// les getter/setter ont été omis pour faciliter la lecture
+	public void setNom(String p_nom) {
+		nom = p_nom;
+	}
+	
+	public String getPreom() {
+		return prenom;
+	}
+
+	public void setPrenom(String p_prenom) {
+		prenom = p_prenom;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int p_age) {
+		age = p_age;
+	}
+
 }
