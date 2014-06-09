@@ -23,7 +23,7 @@ public class EventTest extends JpaTestCase
 		testUpdate();
 		testDelete();
 	}
-	
+
 	private void testCreate()
 	{		
 		Event event = new Event();
@@ -31,19 +31,19 @@ public class EventTest extends JpaTestCase
 		event.setDescription("A vos révisions je vous prie.");
 		event.setBeginDate( new GregorianCalendar(2014,07,14) );
 		event.setAllDay(false);
-		
-		
+
+
 		entityManager.getTransaction().begin();
 		boolean transactionOk = false;
 		try {
 			entityManager.persist(event);
-			
+
 			transactionOk = true;
 		}
 		finally {
 			if(transactionOk) {
 				entityManager.getTransaction().commit();
-				
+
 				Event eventSaved = entityManager.find(Event.class, 2);
 				assertEquals(event.getTitle(), eventSaved.getTitle());
 				assertEquals(event.getDescription(), eventSaved.getDescription());
@@ -55,24 +55,24 @@ public class EventTest extends JpaTestCase
 			}
 		}
 	}
-	
+
 	private void testUpdate()
 	{		
 		String title = "Le nouveau titre";
 		Event event = entityManager.find(Event.class, 2);
 		event.setTitle(title);
-		
+
 		entityManager.getTransaction().begin();
 		boolean transactionOk = false;
 		try {
 			entityManager.persist(event);
-			
+
 			transactionOk = true;
 		}
 		finally {
 			if(transactionOk) {
 				entityManager.getTransaction().commit();
-				
+
 				Event eventSaved = entityManager.find(Event.class, 2);
 				assertEquals(title, eventSaved.getTitle());
 			}
@@ -81,24 +81,24 @@ public class EventTest extends JpaTestCase
 			}
 		}
 	}
-	
+
 	private void testDelete()
 	{		
 		Event event = entityManager.find(Event.class, 2);
-		
+
 		entityManager.getTransaction().begin();
 		boolean transactionOk = false;
 		try {
 			entityManager.persist(event);
-			
+
 			transactionOk = true;
 		}
 		finally {
 			if(transactionOk) {
 				entityManager.remove(event);
-				
+
 				entityManager.getTransaction().commit();
-				
+
 				assertNull(entityManager.find(Event.class, 2));
 			}
 			else {
@@ -106,7 +106,7 @@ public class EventTest extends JpaTestCase
 			}
 		}
 	}
-	
+
 	@Test
 	public void testMerge()
 	{		
@@ -115,22 +115,22 @@ public class EventTest extends JpaTestCase
 		event.setDescription("A vos révisions je vous prie.");
 		event.setBeginDate( new GregorianCalendar(2014,07,14) );
 		event.setAllDay(false);
-		
+
 		entityManager.getTransaction().begin();
 		boolean transactionOk = false;
 		try {
 			entityManager.persist(event);
-			
+
 			event.setTitle("Soutenances");
-			
+
 			entityManager.merge(event);
-			
+
 			transactionOk = true;
 		}
 		finally {
 			if(transactionOk) {
 				entityManager.getTransaction().commit();
-				
+
 				Event eventSaved = entityManager.find(Event.class, 1);
 				assertEquals(event.getTitle(), eventSaved.getTitle());
 			}
@@ -140,4 +140,60 @@ public class EventTest extends JpaTestCase
 		}
 	}
 
+	@Test
+	public void testDetached()
+	{		
+		Event event = entityManager.find(Event.class, 1);
+		String oldTtle = event.getTitle();
+		String newTitle = "Soutenances 1";
+
+		entityManager.getTransaction().begin();
+		boolean transactionOk = false;
+		try {
+			entityManager.detach(event);
+			event.setTitle(newTitle);
+
+			transactionOk = true;
+		}
+		finally {
+			if(transactionOk) {
+				entityManager.getTransaction().commit();
+
+				Event eventSaved = entityManager.find(Event.class, 1);
+				assertEquals(oldTtle, eventSaved.getTitle());
+			}
+			else {
+				entityManager.getTransaction().rollback();
+			}
+		}
+	}
+
+	@Test
+	public void testRefresh()
+	{		
+		Event event = entityManager.find(Event.class, 1);
+		String oldTtle = event.getTitle();
+		String newTitle = "Soutenances 2";
+
+		entityManager.getTransaction().begin();
+		boolean transactionOk = false;
+		try {
+			event.setTitle(newTitle);
+			entityManager.refresh(event);
+
+			transactionOk = true;
+		}
+		finally {
+			if(transactionOk) {
+				entityManager.getTransaction().commit();
+
+				Event eventSaved = entityManager.find(Event.class, 1);
+				assertEquals(oldTtle, eventSaved.getTitle());
+			}
+			else {
+				entityManager.getTransaction().rollback();
+			}
+		}
+
+	}
 }
