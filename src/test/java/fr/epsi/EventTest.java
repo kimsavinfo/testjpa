@@ -1,5 +1,7 @@
 package fr.epsi;
 
+import static org.junit.Assert.*;
+
 import java.util.GregorianCalendar;
 
 import javax.persistence.EntityManager;
@@ -7,10 +9,65 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class EventTest extends JpaTestCase 
 {
+	private static EntityManagerFactory entityManagerFactory;
+
+	@BeforeClass
+	public static void createEntityManagerFactory() 
+	{
+		entityManagerFactory = Persistence.createEntityManagerFactory("EpsiPersistenceUnit");
+	}
+
+	
+	@Test
+	public void createEvent()
+	{
+		
+	/*	entityManagerFactory = Persistence.createEntityManagerFactory("EpsiPersistenceUnit");
+		entityManager = entityManagerFactory.createEntityManager();
+		
+		Event event = new Event();
+		event.setTitle("Partiels");
+		event.setDescription("A vos révisions je vous prie.");
+		event.setBeginDate( new GregorianCalendar(2014,07,14) );
+		event.setAllDay(false);
+		
+		
+		entityManager.getTransaction().begin();
+		boolean transactionOk = false;
+		try {
+			entityManager.persist(event);
+			
+			transactionOk = true;
+		}
+		finally {
+			if(transactionOk) {
+				entityManager.getTransaction().commit();
+				
+				Event eventSaved = entityManager.find(Event.class, 1);
+				assertEquals(event.getTitle(), eventSaved.getTitle());
+				assertEquals(event.getDescription(), eventSaved.getDescription());
+				assertEquals(event.getBeginDate(), eventSaved.getBeginDate());
+				assertEquals(event.isAllDay(), eventSaved.isAllDay());
+				
+				entityManager.close();
+				entityManagerFactory.close();
+			}
+			else {
+				entityManager.getTransaction().rollback();
+			}
+		}
+		*/
+	}
+	
+
+
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
@@ -60,5 +117,7 @@ public class EventTest extends JpaTestCase
 		emf.close();
 
 	}
+	
+	
 
 }
