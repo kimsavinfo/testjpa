@@ -12,11 +12,18 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class EventTest extends JpaTestCase
+public class EventTest extends JpaCaseTest
 {
 	
 	@Test
 	public void test()
+	{		
+		assertEquals("ok", "ok");
+	}
+	
+
+	@Test
+	public void enregistrerEntite()
 	{		
 		assertEquals("ok", "ok");
 	}

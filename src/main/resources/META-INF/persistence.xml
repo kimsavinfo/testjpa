@@ -12,6 +12,7 @@
 			<property name="openjpa.jdbc.DBDictionary" value="hsql(SimulateLocking=true)" />
 			<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)" />
 			<property name="openjpa.Log" value="DefaultLevel=WARN, Runtime=INFO, Tool=INFO, SQL=TRACE" />
+			<property name="RuntimeUnenhancedClasses" value="supported"/>
 		</properties>
 	</persistence-unit>
 </persistence>

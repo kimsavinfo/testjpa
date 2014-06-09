@@ -9,7 +9,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-public abstract class JpaTestCase {
+public abstract class JpaCaseTest {
 
 	private static EntityManagerFactory entityManagerFactory;
 	protected EntityManager entityManager;
