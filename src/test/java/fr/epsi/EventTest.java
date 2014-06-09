@@ -17,7 +17,14 @@ import org.junit.Test;
 public class EventTest extends JpaTestCase
 {
 	@Test
-	public void testCreate()
+	public void testCRUD()
+	{	
+		testCreate();
+		testUpdate();
+		testDelete();
+	}
+	
+	private void testCreate()
 	{		
 		Event event = new Event();
 		event.setTitle("Partiels");
@@ -49,8 +56,7 @@ public class EventTest extends JpaTestCase
 		}
 	}
 	
-	@Test
-	public void testUpdate()
+	private void testUpdate()
 	{		
 		String title = "Le nouveau titre";
 		Event event = entityManager.find(Event.class, 1);
@@ -69,6 +75,31 @@ public class EventTest extends JpaTestCase
 				
 				Event eventSaved = entityManager.find(Event.class, 1);
 				assertEquals(title, eventSaved.getTitle());
+			}
+			else {
+				entityManager.getTransaction().rollback();
+			}
+		}
+	}
+	
+	private void testDelete()
+	{		
+		Event event = entityManager.find(Event.class, 1);
+		
+		entityManager.getTransaction().begin();
+		boolean transactionOk = false;
+		try {
+			entityManager.persist(event);
+			
+			transactionOk = true;
+		}
+		finally {
+			if(transactionOk) {
+				entityManager.remove(event);
+				
+				entityManager.getTransaction().commit();
+				
+				assertNull(entityManager.find(Event.class, 1));
 			}
 			else {
 				entityManager.getTransaction().rollback();
