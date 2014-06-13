@@ -16,73 +16,45 @@ import org.junit.Test;
 
 public class EventTest extends JpaTestCase
 {
-	@Test
-	public void testCRUD()
-	{	
-		testCreate();
-		testUpdate();
-		testDelete();
-	}
 
-	private void testCreate()
+	@Test
+	public void testCreate()
 	{		
 		Event event = new Event();
 		event.setTitle("Partiels");
 		event.setDescription("A vos révisions je vous prie.");
 		event.setBeginDate( new GregorianCalendar(2014,07,14) );
 		event.setAllDay(false);
+		enregistrerEvent(event);
+
+		Event eventSaved = entityManager.find(Event.class,event.getId());
+		assertEquals(event.getTitle(), eventSaved.getTitle());
+		assertEquals(event.getDescription(), eventSaved.getDescription());
+		assertEquals(event.getBeginDate(), eventSaved.getBeginDate());
+		assertEquals(event.isAllDay(), eventSaved.isAllDay());
 
 
-		entityManager.getTransaction().begin();
-		boolean transactionOk = false;
-		try {
-			entityManager.persist(event);
 
-			transactionOk = true;
-		}
-		finally {
-			if(transactionOk) {
-				entityManager.getTransaction().commit();
-
-				Event eventSaved = entityManager.find(Event.class, 2);
-				assertEquals(event.getTitle(), eventSaved.getTitle());
-				assertEquals(event.getDescription(), eventSaved.getDescription());
-				assertEquals(event.getBeginDate(), eventSaved.getBeginDate());
-				assertEquals(event.isAllDay(), eventSaved.isAllDay());
-			}
-			else {
-				entityManager.getTransaction().rollback();
-			}
-		}
 	}
 
-	private void testUpdate()
+	@Test
+	public void testUpdate()
 	{		
 		String title = "Le nouveau titre";
-		Event event = entityManager.find(Event.class, 2);
-		event.setTitle(title);
 
-		entityManager.getTransaction().begin();
-		boolean transactionOk = false;
-		try {
-			entityManager.persist(event);
+		Event event = new Event();
+		event.setTitle("titre original");
+		enregistrerEvent(event);
 
-			transactionOk = true;
-		}
-		finally {
-			if(transactionOk) {
-				entityManager.getTransaction().commit();
+		Event eventSaved = entityManager.find(Event.class,event.getId());
+		eventSaved.setTitle(title);
+		enregistrerEvent(eventSaved);
 
-				Event eventSaved = entityManager.find(Event.class, 2);
-				assertEquals(title, eventSaved.getTitle());
-			}
-			else {
-				entityManager.getTransaction().rollback();
-			}
-		}
+
 	}
 
-	private void testDelete()
+	@Test
+	public void testDelete()
 	{		
 		Event event = entityManager.find(Event.class, 2);
 
@@ -110,20 +82,24 @@ public class EventTest extends JpaTestCase
 	@Test
 	public void testMerge()
 	{		
+		Event sameEvent = new Event();
 		Event event = new Event();
 		event.setTitle("Partiels");
 		event.setDescription("A vos révisions je vous prie.");
 		event.setBeginDate( new GregorianCalendar(2014,07,14) );
 		event.setAllDay(false);
+	
+
 
 		entityManager.getTransaction().begin();
 		boolean transactionOk = false;
 		try {
 			entityManager.persist(event);
 
-			event.setTitle("Soutenances");
-
-			entityManager.merge(event);
+		
+			sameEvent.setId(event.getId());
+			sameEvent.setTitle("Soutenances");
+			sameEvent = entityManager.merge(sameEvent);
 
 			transactionOk = true;
 		}
@@ -131,8 +107,8 @@ public class EventTest extends JpaTestCase
 			if(transactionOk) {
 				entityManager.getTransaction().commit();
 
-				Event eventSaved = entityManager.find(Event.class, 1);
-				assertEquals(event.getTitle(), eventSaved.getTitle());
+				assertEquals("Soutenances", sameEvent.getTitle());
+				assertEquals(event.getDescription(), sameEvent.getDescription());
 			}
 			else {
 				entityManager.getTransaction().rollback();
@@ -171,15 +147,19 @@ public class EventTest extends JpaTestCase
 	@Test
 	public void testRefresh()
 	{		
-		Event event = entityManager.find(Event.class, 1);
+		Event event = new Event();
+		event.setTitle("tritre original");
+		enregistrerEvent(event);
+		
+		Event savedEvent = entityManager.find(Event.class, event.getId());
 		String oldTtle = event.getTitle();
 		String newTitle = "Soutenances 2";
 
 		entityManager.getTransaction().begin();
 		boolean transactionOk = false;
 		try {
-			event.setTitle(newTitle);
-			entityManager.refresh(event);
+			savedEvent.setTitle(newTitle);
+			entityManager.refresh(savedEvent);
 
 			transactionOk = true;
 		}
@@ -187,7 +167,7 @@ public class EventTest extends JpaTestCase
 			if(transactionOk) {
 				entityManager.getTransaction().commit();
 
-				Event eventSaved = entityManager.find(Event.class, 1);
+				Event eventSaved = entityManager.find(Event.class,savedEvent.getId());
 				assertEquals(oldTtle, eventSaved.getTitle());
 			}
 			else {
@@ -195,5 +175,24 @@ public class EventTest extends JpaTestCase
 			}
 		}
 
+	}
+
+	private void enregistrerEvent(Event event){
+		entityManager.getTransaction().begin();
+		boolean transactionOk = false;
+		try {
+			entityManager.persist(event);
+
+			transactionOk = true;
+		}
+		finally {
+			if(transactionOk) {
+				entityManager.getTransaction().commit();
+
+			}
+			else {
+				entityManager.getTransaction().rollback();
+			}
+		}
 	}
 }
